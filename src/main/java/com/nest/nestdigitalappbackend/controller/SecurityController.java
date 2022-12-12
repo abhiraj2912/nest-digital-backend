@@ -26,7 +26,7 @@ public class SecurityController {
     @CrossOrigin(value = "*")
     @PostMapping(path = "/deletesecurity", consumes = "application/json", produces = "application/json")
     public HashMap<String, String> securityDelete(@RequestBody Security s){
-
+        sdao.deleteEmployee(s.getId());
         HashMap<String, String> map = new HashMap<>();
         map.put("status","success");
         return map;
