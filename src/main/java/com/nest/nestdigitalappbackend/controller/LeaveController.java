@@ -6,12 +6,14 @@ import com.nest.nestdigitalappbackend.model.EmployeeLog;
 import com.nest.nestdigitalappbackend.model.LeaveApplication;
 import com.nest.nestdigitalappbackend.model.LeaveCount;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.web.bind.annotation.*;
 
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.Period;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,6 +30,8 @@ public class LeaveController {
     @CrossOrigin(value = "*")
     @PostMapping(path = "/applyleave", consumes = "application/json", produces = "application/json")
     public HashMap<String,String> applyLeave(@RequestBody LeaveApplication la){
+        LocalDate ld = LocalDate.now();
+        la.setAppliedDate(String.valueOf(ld));
         ladao.save(la);
         HashMap<String,String> map = new HashMap<>();
         map.put("status","success");
@@ -41,13 +45,13 @@ public class LeaveController {
     }
 
     @CrossOrigin(value = "*")
-    @PostMapping(path = "/viewleave", consumes = "application/json", produces = "application/json")
+    @GetMapping("/viewleave")
     public List<Map<String,String>> pendingApproval(){
         return ladao.pendingLeave();
     }
 
     @CrossOrigin(value = "*")
-    @PostMapping(path = "/leavestatus", consumes = "application/json", produces = "application/json")
+    @PostMapping(path = "/updatestatus", consumes = "application/json", produces = "application/json")
     public HashMap<String,String> updateStatus(@RequestBody LeaveApplication la){
         ladao.updateStatus(la.getId(),la.getStatus());
         HashMap<String,String> map = new HashMap<>();

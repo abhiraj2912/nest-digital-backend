@@ -4,6 +4,7 @@ import com.nest.nestdigitalappbackend.dao.EmployeeDao;
 import com.nest.nestdigitalappbackend.dao.LeaveCountDao;
 import com.nest.nestdigitalappbackend.model.Employee;
 import com.nest.nestdigitalappbackend.model.LeaveCount;
+import com.nest.nestdigitalappbackend.model.Security;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -54,5 +55,28 @@ public class EmployeeController {
     @PostMapping(value = "/searchemployee", consumes = "application/json", produces = "application/json")
     public List<Employee> searchEmployee(@RequestBody Employee e){
         return (List<Employee>) edao.searchEmployee(e.getName());
+    }
+
+    @CrossOrigin(origins = "*")
+    @PostMapping(path = "/emplogin", consumes = "application/json", produces = "application/json")
+    public HashMap<String, String> Login(@RequestBody Employee e){
+        HashMap <String, String> map = new HashMap<>();
+        List<Employee> result = edao.LoginCheck(e.getUsername(),e.getPassword());
+        if(result.size()==0){
+            map.put("status","failed");
+            return map;
+        }
+        else {
+            int id = result.get(0).getId();
+            map.put("id",String.valueOf(id));
+            map.put("status","success");
+            return map;
+        }
+    }
+
+    @CrossOrigin(origins = "*")
+    @PostMapping(path = "/empinfo", consumes = "application/json", produces = "application/json")
+    public List<Employee> employeeInfo(@RequestBody Employee e){
+        return (List<Employee>) edao.employeeInfo(e.getId());
     }
 }
