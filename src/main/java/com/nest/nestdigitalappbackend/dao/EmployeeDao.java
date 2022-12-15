@@ -1,6 +1,7 @@
 package com.nest.nestdigitalappbackend.dao;
 
 import com.nest.nestdigitalappbackend.model.Employee;
+import com.nest.nestdigitalappbackend.model.Security;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -21,5 +22,11 @@ public interface EmployeeDao extends CrudRepository<Employee, Integer> {
 
     @Query(value = "SELECT `id`, `address`, `designation`, `dob`, `email`, `emp_code`, `name`, `password`, `phone`, `salary`, `username` FROM `employees` WHERE `emp_code` =:empCode", nativeQuery = true)
     List<Employee> fetchId(@Param("empCode") Integer empCode);
+
+    @Query(value = "SELECT `id`, `address`, `designation`, `dob`, `email`, `emp_code`, `name`, `password`, `phone`, `salary`, `username` FROM `employees` WHERE `username`=:username AND `password` =:password",nativeQuery = true)
+    List <Employee> LoginCheck(@Param("username") String username, @Param("password") String password);
+
+    @Query(value = "SELECT `id`, `address`, `designation`, `dob`, `email`, `emp_code`, `name`, `password`, `phone`, `salary`, `username` FROM `employees` WHERE `id`=:id", nativeQuery = true)
+    List <Employee> employeeInfo(@Param("id") Integer id);
 
 }
