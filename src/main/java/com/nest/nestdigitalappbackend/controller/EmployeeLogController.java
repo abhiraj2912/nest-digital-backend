@@ -1,7 +1,10 @@
 package com.nest.nestdigitalappbackend.controller;
 
+import com.nest.nestdigitalappbackend.dao.EmployeeDao;
 import com.nest.nestdigitalappbackend.dao.EmployeeLogDao;
+import com.nest.nestdigitalappbackend.model.Employee;
 import com.nest.nestdigitalappbackend.model.EmployeeLog;
+import com.nest.nestdigitalappbackend.model.Security;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,6 +18,8 @@ public class EmployeeLogController {
     @Autowired
     private EmployeeLogDao eldao;
 
+    @Autowired
+    private EmployeeDao edao;
 
     @CrossOrigin(value = "*")
     @PostMapping(path = "/addemployeelog", consumes = "application/json", produces = "application/json")
@@ -35,5 +40,23 @@ public class EmployeeLogController {
     @PostMapping(path = "/emplogdate", consumes = "application/json", produces = "application/json")
     public List<Map<String,String>> employeeLogByDate(@RequestBody EmployeeLog el){
         return eldao.employeeLogByDate(el.getDate());
+    }
+
+    @CrossOrigin(origins = "*")
+    @PostMapping(path = "/fetchempid", consumes = "application/json", produces = "application/json")
+    public HashMap<String, String> fetchId(@RequestBody Employee e){
+        HashMap <String, String> map = new HashMap<>();
+        List<Employee> result = edao.fetchId(e.getEmpCode());
+        if(result.size()==0){
+            map.put("status","failed");
+            return map;
+        }
+        else {
+            int id = result.get(0).getId();
+            map.put("id",String.valueOf(id));
+            map.put("status","success");
+            return map;
+        }
+
     }
 }
