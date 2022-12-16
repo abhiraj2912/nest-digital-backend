@@ -27,9 +27,9 @@ public class EmployeeController {
         LeaveCount l = new LeaveCount();
         l.setEmpId(e.getId());
         l.setYear("2022");
-        l.setCasualLeave("20");
-        l.setSickLeave("7");
-        l.setSpecialLeave("3");
+        l.setCasualLeave(20);
+        l.setSickLeave(7);
+        l.setSpecialLeave(3);
         ldao.save(l);
         HashMap<String, String> map = new HashMap<>();
         map.put("status","success");
@@ -68,7 +68,9 @@ public class EmployeeController {
         }
         else {
             int id = result.get(0).getId();
+            int empCode = result.get(0).getEmpCode();
             map.put("id",String.valueOf(id));
+            map.put("empCoe",String.valueOf(empCode));
             map.put("status","success");
             return map;
         }

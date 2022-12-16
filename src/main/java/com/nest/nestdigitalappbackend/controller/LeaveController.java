@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.Period;
@@ -34,6 +35,11 @@ public class LeaveController {
         la.setAppliedDate(String.valueOf(ld));
         ladao.save(la);
         HashMap<String,String> map = new HashMap<>();
+        switch (la.getLeaveType()) {
+            case "Casual" ->lcdao.casualLeave(la.getId(), la.getEmpId());
+            case "Sick" -> lcdao.sickLeave(la.getId(), la.getEmpId());
+            case "Special" ->lcdao.specialLeave(la.getId(), la.getEmpId());
+        }
         map.put("status","success");
         return map;
     }
@@ -51,11 +57,38 @@ public class LeaveController {
     }
 
     @CrossOrigin(value = "*")
+    @GetMapping("/viewallleave")
+    public List<Map<String,String>> viewLeave(){
+        return ladao.viewAllLeave();
+    }
+    @CrossOrigin(value = "*")
     @PostMapping(path = "/updatestatus", consumes = "application/json", produces = "application/json")
     public HashMap<String,String> updateStatus(@RequestBody LeaveApplication la){
         ladao.updateStatus(la.getId(),la.getStatus());
+        List<LeaveApplication> empId = ladao.fetchDetails(la.getId());
+        if (la.getStatus().equals("Rejected")){
+            List <LeaveApplication> type = ladao.fetchDetails(la.getId());
+            switch (type.get(0).getLeaveType()) {
+                case "Casual" -> lcdao.rejCasualLeave(la.getId(), empId.get(0).getEmpId());
+                case "Sick" -> lcdao.rejSickLeave(la.getId(), empId.get(0).getEmpId());
+                case "Special" -> lcdao.rejSpecialLeave(la.getId(), empId.get(0).getEmpId());
+            }
+        }
         HashMap<String,String> map = new HashMap<>();
         map.put("status","success");
         return map;
     }
+
+    @CrossOrigin(value = "*")
+    @PostMapping(path = "/empViewPending", consumes = "application/json", produces = "application/json")
+    public List<LeaveApplication> empViewPending(@RequestBody LeaveApplication la){
+        return ladao.viewStatus(la.getEmpId());
+    }
+
+    @CrossOrigin(value = "*")
+    @PostMapping(path = "/getcount", consumes = "application/json", produces = "application/json")
+    public List<LeaveCount> getLeaveCount(@RequestBody LeaveCount lc){
+        return lcdao.getCount(lc.getEmpId());
+    }
+
 }
