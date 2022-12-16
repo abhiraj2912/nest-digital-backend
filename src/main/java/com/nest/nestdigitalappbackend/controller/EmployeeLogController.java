@@ -2,12 +2,15 @@ package com.nest.nestdigitalappbackend.controller;
 
 import com.nest.nestdigitalappbackend.dao.EmployeeDao;
 import com.nest.nestdigitalappbackend.dao.EmployeeLogDao;
+import com.nest.nestdigitalappbackend.dao.LeaveApplicationDao;
 import com.nest.nestdigitalappbackend.model.Employee;
 import com.nest.nestdigitalappbackend.model.EmployeeLog;
+import com.nest.nestdigitalappbackend.model.LeaveApplication;
 import com.nest.nestdigitalappbackend.model.Security;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,13 +24,23 @@ public class EmployeeLogController {
     @Autowired
     private EmployeeDao edao;
 
+    @Autowired
+    private LeaveApplicationDao ladao;
+
     @CrossOrigin(value = "*")
     @PostMapping(path = "/addemployeelog", consumes = "application/json", produces = "application/json")
     public HashMap<String,String> addEmployeeLog(@RequestBody EmployeeLog el){
-        eldao.save(el);
+        List<LeaveApplication> result = ladao.securityCheck(el.getEmpId());
         HashMap<String,String> map = new HashMap<>();
-        map.put("status","success");
-        return map;
+        if(result.size()==0){
+            eldao.save(el);
+            map.put("status","success");
+            return map;
+        }
+        else {
+            map.put("status","failed");
+            return map;
+        }
     }
 
     @CrossOrigin(value = "*")
@@ -59,4 +72,22 @@ public class EmployeeLogController {
         }
 
     }
+
+    @CrossOrigin(origins = "*")
+    @PostMapping(path = "/addempexitlog", consumes = "application/json", produces = "application/json")
+    public HashMap<String,String> addExitEmployeeLog(@RequestBody EmployeeLog el){
+        eldao.addEmpExitLog(el.getId(),el.getExitTime());
+        HashMap<String,String> map = new HashMap<>();
+        map.put("status","success");
+        return map;
+    }
+
+    @CrossOrigin(value = "*")
+    @PostMapping(path = "/emplogtoday", consumes = "application/json", produces = "application/json")
+    public List<Map<String,String>> employeeLogToday(@RequestBody Employee e){
+        LocalDate ld = LocalDate.now();
+        String date = String.valueOf(ld);
+        return eldao.employeeLogToday(e.getEmpCode(), date);
+    }
+
 }

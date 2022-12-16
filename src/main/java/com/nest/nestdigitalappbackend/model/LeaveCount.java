@@ -14,14 +14,14 @@ public class LeaveCount {
     private int id;
     private int empId;
     private String year;
-    private String sickLeave;
-    private String casualLeave;
-    private String specialLeave;
+    private int sickLeave;
+    private int casualLeave;
+    private int specialLeave;
 
     public LeaveCount() {
     }
 
-    public LeaveCount(int id, int empId, String year, String sickLeave, String casualLeave, String specialLeave) {
+    public LeaveCount(int id, int empId, String year, int sickLeave, int casualLeave, int specialLeave) {
         this.id = id;
         this.empId = empId;
         this.year = year;
@@ -54,27 +54,27 @@ public class LeaveCount {
         this.year = year;
     }
 
-    public String getSickLeave() {
+    public int getSickLeave() {
         return sickLeave;
     }
 
-    public void setSickLeave(String sickLeave) {
+    public void setSickLeave(int sickLeave) {
         this.sickLeave = sickLeave;
     }
 
-    public String getCasualLeave() {
+    public int getCasualLeave() {
         return casualLeave;
     }
 
-    public void setCasualLeave(String casualLeave) {
+    public void setCasualLeave(int casualLeave) {
         this.casualLeave = casualLeave;
     }
 
-    public String getSpecialLeave() {
+    public int getSpecialLeave() {
         return specialLeave;
     }
 
-    public void setSpecialLeave(String specialLeave) {
+    public void setSpecialLeave(int specialLeave) {
         this.specialLeave = specialLeave;
     }
 }
